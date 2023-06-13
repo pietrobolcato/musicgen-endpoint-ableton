@@ -1,0 +1,17 @@
+name: endpoint-provision
+
+on:
+  workflow_dispatch:
+  # push:
+
+jobs:
+  endpoint-provision:
+    permissions:
+      id-token: write
+      contents: read
+    uses: ./.github/workflows/helpers-terraform-execute-template.yaml
+    with:
+      tf_action: apply
+      aws_role: arn:aws:iam::138140302683:role/gha-role-sagemaker
+      aws_role_region: us-east-1
+      root_folder: aws/terraform/provision_endpoint/src

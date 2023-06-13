@@ -1,0 +1,48 @@
+# prod environment configuration
+
+# general settings
+namespace: isnet
+postfix: '0001'
+environment: prod
+
+# model settings
+# based on the provided `model_group_name`, the `get_latest_approved_model.py` script
+# extends the yaml file with the variable `model_arn` that are needed for terraform
+# to run successfully
+model_group_name: mnist-model
+model_arn: <get_from_script>
+execution_role_arn: arn:aws:iam::138140302683:role/service-role/AmazonSageMaker-ExecutionRole-20230522T162566
+
+# endpoint configuration settings
+instance_type: ml.m6g.large
+instance_count: 1
+
+# data capture settings
+enable_data_capture: true
+create_s3_bucket: true
+s3_bucket_name: pbolcato-test-sagemaker-data-capture
+s3_bucket_force_destroy: false
+sampling_percentage: 100
+data_capture_s3_upload_path: s3://$(s3_bucket_name)/
+
+# autoscaling settings
+enable_autoscaling: true
+min_capacity: 1
+max_capacity: 2
+
+# target tracking scaling policy
+# autoscaling_type: "target_tracking"
+policy_target_value: 1500
+scale_in_cooldown: 300
+scale_out_cooldown: 100
+
+# step scaling policy
+autoscaling_type: step_scaling
+
+step_scaling_scale_out_threshold: 1500
+step_scaling_scale_out_period: 60
+step_scaling_scale_out_evaluation_periods: 1
+
+step_scaling_scale_in_threshold: 1300
+step_scaling_scale_in_period: 60
+step_scaling_scale_in_evaluation_periods: 1

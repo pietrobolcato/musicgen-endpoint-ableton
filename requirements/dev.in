@@ -1,0 +1,8 @@
+# import production requirements
+-r prod.txt
+
+# add development requirements
+pre-commit
+pip-tools
+pytest
+sagemaker[local]

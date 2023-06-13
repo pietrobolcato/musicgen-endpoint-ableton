@@ -1,0 +1,42 @@
+name: helpers-set-environment-configuration-file
+
+on:
+  workflow_call:
+    inputs:
+      root_folder:
+        description: "The root folder where the configuration file is located, relative to the root folder of the repo. Default it `/`"
+        type: string
+        required: false
+        default: "/"
+      config_file_prefix:
+        description: "Prefix of the configuration file. Default is `config-`"
+        type: string
+        required: false
+        default: "config-"
+    outputs:
+      config_file:
+        description: "The configuration file path"
+        value: ${{ jobs.set-environment-configuration-file.outputs.config_file }}
+
+jobs:
+  # set the config file to read based on the branch
+  set-environment-configuration-file:
+    runs-on: ubuntu-latest
+    outputs:
+      config_file: ${{ steps.set-output-defaults.outputs.config_file }}
+    env:
+      FULL_PREFIX: ${{ inputs.root_folder }}/${{ inputs.config_file_prefix }}
+    steps:
+      - id: set-production-configuration
+        name: set-production-configuration-target
+        if: ${{ github.ref == 'refs/heads/main'}}
+        run: echo "config_env=${{ env.FULL_PREFIX }}prod.yaml" >> $GITHUB_ENV;
+
+      - id: set-development-configuration
+        name: set-development-configuration-target
+        if: ${{ github.ref != 'refs/heads/main'}}
+        run: echo "config_env=${{ env.FULL_PREFIX }}dev.yaml" >> $GITHUB_ENV;
+
+      - id: set-output-defaults
+        name: set-target-as-output-defaults
+        run: echo "config_file=$config_env" >> $GITHUB_OUTPUT;

@@ -1,0 +1,5 @@
+{
+  "image": "pietrobolcato/terraform-dev-container:230314.1",
+  "postStartCommand": "git config --global --add safe.directory ${containerWorkspaceFolder} && bash .devcontainer/scripts/first_time_setup.sh",
+  "runArgs": ["--gpus", "all"]
+}

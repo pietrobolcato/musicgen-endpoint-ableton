@@ -1,0 +1,66 @@
+[project]
+name = "ai-template-module"
+version = "1.0.0"
+description = "Template for an AI module"
+authors = ["Pietro Bolcato <pietrobolcato@gmail.com>"]
+readme = "README.md"
+packages = [{include = "src"}]
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+[tool.flake8]
+select = ['ANN','B','B9','BLK','C','D','E','F','I','S','W'] # only check selected error codes
+max-complexity = 12 # complexity checker threshold
+max-line-length = 88
+extend-ignore = [
+    # import order
+    'I100',
+    'I101',
+    'I202',
+    # E W - flake8 PEP style check
+    # whitespace, import, line length, binary operator line breaks
+    'E203',
+    'E402',
+    'E501',
+    'W503',
+    # S - flake8-bandit safety check
+    # assert removed in bytecode, pRNG not secure, hardcoded password
+    'S101',
+    'S311',
+    'S105',
+    # ANN - flake8-annotations type annotation check
+    'ANN',
+    'ANN002',
+    'ANN003',
+    'ANN101',
+    'ANN102',
+    'ANN202',
+    # D1 - flake8-docstrings docstring style check
+    # check missing docstrings
+    'D100',
+    'D102',
+    'D103',
+    'D104',
+    'D105',
+    # D2 D4 - flake8-docstrings docstring style check
+    # whitespace issues and first line content
+    'D200',
+    'D205',
+    'D400',
+    'D401',
+    'D406',
+    # DAR - flake8-darglint docstring correctness check
+    # mismatched or missing type in docstring
+    'DAR103',
+]
+import-order-style = "google"
+docstring-convention = "numpy"
+strictness = "short"
+docstring-style = "numpy"
+suppress-none-returning = true
+mypy-init-return = true
+
+[tool.isort]
+profile = "black"

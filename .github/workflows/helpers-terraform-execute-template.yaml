@@ -1,0 +1,193 @@
+name: helpers-terraform-execute-template
+
+on:
+  workflow_call:
+    inputs:
+      tf_action:
+        description: "Terraform action. Can be: `apply`, `destroy`, `validate`, `plan`, `plan-destroy`"
+        type: string
+        required: true
+        default: "apply"
+      aws_role:
+        description: "The AWS role that is configured to work with github actions"
+        type: string
+        required: true
+      aws_role_region:
+        description: "The region of the AWS role that is configured to work with github actions"
+        type: string
+        required: true
+      root_folder:
+        description: >
+          "The root folder where the yaml configuration file is located, relative to the
+          root folder of the repo. Default it `/`. It should have a `terraform` directory
+          and the `scripts//get_latest_approved_model.py`
+          file in order for it to work correctly"
+        type: string
+        required: false
+        default: "/"
+
+# not allowed in reusable workflow, this must be set in the job calling the workflow
+# permissions:
+#   id-token: write
+#   contents: read
+
+jobs:
+  set-environment-configuration-file:
+    uses: ./.github/workflows/helpers-set-environment-configuration-file.yaml
+    with:
+      root_folder: ${{ inputs.root_folder }}
+
+  extend-config-yaml:
+    runs-on: ubuntu-latest
+    needs: set-environment-configuration-file
+    env:
+      INPUT_FILE: ${{ github.workspace }}/${{ needs.set-environment-configuration-file.outputs.config_file }}
+    outputs:
+      input_file: ${{ env.INPUT_FILE }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ inputs.aws_role }}
+          aws-region: ${{ inputs.aws_role_region }}
+
+      - name: check identity
+        run: |
+          aws sts get-caller-identity
+
+      - name: install python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: run script
+        id: run_script
+        run: |
+          cd ${{ inputs.root_folder }}/scripts/
+          pip install -r requirements.txt
+          python get_latest_approved_model.py --input-file $INPUT_FILE
+
+          cat $INPUT_FILE
+
+      - name: upload extended config as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: extended-config
+          path: ${{ env.INPUT_FILE }}
+          retention-days: 1
+
+  terraform-execute:
+    runs-on: ubuntu-latest
+    needs: extend-config-yaml
+    env:
+      INPUT_FILE: ${{ needs.extend-config-yaml.outputs.input_file }}
+      TERRAFORM_DIR: ${{ inputs.root_folder }}/terraform
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ inputs.aws_role }}
+          aws-region: ${{ inputs.aws_role_region }}
+
+      - name: get dirname to download the extended config
+        id: get_dirname
+        run: |
+          echo "dirname=$(dirname ${{ env.INPUT_FILE }})" >> $GITHUB_OUTPUT
+
+      - name: download extended config
+        uses: actions/download-artifact@v3
+        with:
+          name: extended-config
+          path: ${{ steps.get_dirname.outputs.dirname }}
+
+      - name: sanity check read
+        run: cat ${{ env.INPUT_FILE }}
+
+      - name: read extended tf config
+        uses: pietrobolcato/action-read-yaml@main
+        id: read_extended_tf_config
+        with:
+          config: ${{ env.INPUT_FILE }}
+
+      - name: delete extended tf config artifact
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: extended-config
+
+      # terraform
+      - name: terraform-setup
+        uses: hashicorp/setup-terraform@v2
+
+      - name: terraform-init
+        run: terraform -chdir=${{ env.TERRAFORM_DIR }} init
+
+      - name: terraform-validate
+        run: terraform -chdir=${{ env.TERRAFORM_DIR }} validate
+
+      - name: terraform-create-vars-file
+        run: |
+          VARS_OUT_PATH="${{ env.TERRAFORM_DIR }}/run_vars.tfvars"
+
+          # general settings
+          echo namespace=\"${{ steps.read_extended_tf_config.outputs.namespace }}\" >> $VARS_OUT_PATH
+          echo postfix=\"${{ steps.read_extended_tf_config.outputs.postfix }}\" >> $VARS_OUT_PATH
+          echo environment=\"${{ steps.read_extended_tf_config.outputs.environment }}\" >> $VARS_OUT_PATH
+
+          # model settings
+          echo execution_role_arn=\"${{ steps.read_extended_tf_config.outputs.execution_role_arn }}\" >> $VARS_OUT_PATH
+          echo model_arn=\"${{ steps.read_extended_tf_config.outputs.model_arn }}\" >> $VARS_OUT_PATH
+
+          # endpoint configuration settings
+          echo instance_type=\"${{ steps.read_extended_tf_config.outputs.instance_type }}\" >> $VARS_OUT_PATH
+          echo instance_count=\"${{ steps.read_extended_tf_config.outputs.instance_count }}\" >> $VARS_OUT_PATH
+
+          # data capture settings
+          echo enable_data_capture=${{ steps.read_extended_tf_config.outputs.enable_data_capture }} >> $VARS_OUT_PATH
+
+          echo create_s3_bucket=${{ steps.read_extended_tf_config.outputs.create_s3_bucket }} >> $VARS_OUT_PATH
+          echo s3_bucket_name=\"${{ steps.read_extended_tf_config.outputs.s3_bucket_name }}\" >> $VARS_OUT_PATH
+          echo s3_bucket_force_destroy=${{ steps.read_extended_tf_config.outputs.s3_bucket_force_destroy }} >> $VARS_OUT_PATH
+
+          echo sampling_percentage=${{ steps.read_extended_tf_config.outputs.sampling_percentage }} >> $VARS_OUT_PATH
+          echo data_capture_s3_upload_path=\"${{ steps.read_extended_tf_config.outputs.data_capture_s3_upload_path }}\" >> $VARS_OUT_PATH
+
+          # autoscaling settings
+          echo enable_autoscaling=${{ steps.read_extended_tf_config.outputs.enable_autoscaling }} >> $VARS_OUT_PATH
+          echo min_capacity=${{ steps.read_extended_tf_config.outputs.min_capacity }} >> $VARS_OUT_PATH
+          echo max_capacity=${{ steps.read_extended_tf_config.outputs.max_capacity }} >> $VARS_OUT_PATH
+          echo autoscaling_type=\"${{ steps.read_extended_tf_config.outputs.autoscaling_type }}\" >> $VARS_OUT_PATH
+
+          # target tracking scaling policy
+          echo policy_target_value=${{ steps.read_extended_tf_config.outputs.policy_target_value }} >> $VARS_OUT_PATH
+          echo scale_in_cooldown=${{ steps.read_extended_tf_config.outputs.scale_in_cooldown }} >> $VARS_OUT_PATH
+          echo scale_out_cooldown=${{ steps.read_extended_tf_config.outputs.scale_out_cooldown }} >> $VARS_OUT_PATH
+
+          # step scaling policy
+          echo step_scaling_scale_out_threshold=${{ steps.read_extended_tf_config.outputs.step_scaling_scale_out_threshold }} >> $VARS_OUT_PATH
+          echo step_scaling_scale_out_period=${{ steps.read_extended_tf_config.outputs.step_scaling_scale_out_period }} >> $VARS_OUT_PATH
+          echo step_scaling_scale_out_evaluation_periods=${{ steps.read_extended_tf_config.outputs.step_scaling_scale_out_evaluation_periods }} >> $VARS_OUT_PATH
+
+          echo step_scaling_scale_in_threshold=${{ steps.read_extended_tf_config.outputs.step_scaling_scale_in_threshold }} >> $VARS_OUT_PATH
+          echo step_scaling_scale_in_period=${{ steps.read_extended_tf_config.outputs.step_scaling_scale_in_period }} >> $VARS_OUT_PATH
+          echo step_scaling_scale_in_evaluation_periods=${{ steps.read_extended_tf_config.outputs.step_scaling_scale_in_evaluation_periods }} >> $VARS_OUT_PATH
+
+          cat $VARS_OUT_PATH
+
+      # execute plan apply or destroy based on the specified action input
+      - name: terraform-plan-apply
+        if: ${{ (inputs.tf_action == 'apply') || (inputs.tf_action == 'plan') }}
+        run: terraform -chdir=${{ env.TERRAFORM_DIR }} plan -var-file=run_vars.tfvars -input=false -out=out.tfplan
+
+      - name: terraform-plan-destroy
+        if: ${{ (inputs.tf_action == 'destroy') || (inputs.tf_action == 'plan-destroy') }}
+        run: terraform -chdir=${{ env.TERRAFORM_DIR }} plan -destroy -var-file=run_vars.tfvars -input=false -out=out.tfplan
+
+      - name: terraform-apply
+        if: ${{ (inputs.tf_action == 'apply') || (inputs.tf_action == 'destroy') }}
+        run: terraform -chdir=${{ env.TERRAFORM_DIR }} apply -input=false -auto-approve out.tfplan

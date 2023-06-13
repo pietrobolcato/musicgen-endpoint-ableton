@@ -1,0 +1,88 @@
+repos:
+  # a set of useful Python-based pre-commit hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      # list of definitions and supported hooks: https://pre-commit.com/hooks.html
+      - id: trailing-whitespace # removes any whitespace at the ends of lines
+      - id: check-toml # check toml syntax by loading all toml files
+      - id: check-yaml # check yaml syntax by loading all yaml files
+      - id: check-json # check-json syntax by loading all json files
+      - id: check-merge-conflict # check for files with merge conflict strings
+        args: ["--assume-in-merge"] #  and run this check even when not explicitly in a merge
+      - id: check-added-large-files # check that no "large" files have been added
+        args: ["--maxkb=10240"] #  where large means 10MB+, as in Hugging Face's git server
+      - id: debug-statements # check for python debug statements (import pdb, breakpoint, etc.)
+      - id: detect-private-key # checks for private keys (BEGIN X PRIVATE KEY, etc.)
+
+  # black python autoformatting
+  - repo: https://github.com/psf/black
+    rev: 23.1.0
+    hooks:
+      - id: black
+
+  # flake8 python linter with all the fixins
+  - repo: https://github.com/PyCQA/flake8
+    rev: 6.0.0
+    hooks:
+      # additional configuration of flake8 and extensions in pyproject.toml
+      - id: flake8
+        additional_dependencies:
+          [
+            flake8-annotations,
+            flake8-bandit,
+            flake8-bugbear,
+            flake8-black,
+            flake8-docstrings,
+            flake8-import-order,
+            darglint,
+            mypy,
+            pycodestyle,
+            pydocstyle,
+            Flake8-pyproject
+          ]
+
+  # removed unused imports and variables
+  - repo: https://github.com/PyCQA/autoflake
+    rev: v2.0.1
+    hooks:
+      - id: autoflake
+        name: autoflake
+        entry: autoflake
+        language: python
+        "types": [python]
+        require_serial: true
+        args:
+          - "--in-place"
+          - "--expand-star-imports"
+          - "--remove-duplicate-keys"
+          - "--remove-unused-variables"
+
+  # add trailing commas to calls and literals
+  - repo: https://github.com/asottile/add-trailing-comma
+    rev: v2.4.0
+    hooks:
+      - id: add-trailing-comma
+        args:
+          - --py36-plus
+
+  # upgrade syntax for new version of python
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.3.1
+    hooks:
+      - id: pyupgrade
+        args:
+          - --py36-plus
+
+  # sort python imports in the right order
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        name: isort (python)
+
+  # shellcheck-py for linting shell files
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.9.0.2
+    hooks:
+      - id: shellcheck
