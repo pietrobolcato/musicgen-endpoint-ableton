@@ -6,7 +6,7 @@ postfix   = "0001"
 create_elastic_ip = true
 
 # ec2 settings
-ami             = "ami-05b22acc58f4e6494"
+ami             = "ami-0810c2d824776b340"
 instance_type   = "g4dn.xlarge"
 public_key_path = "musicgen-key-ec2.ignore.pub"
 
