@@ -1,1 +1,2 @@
-# add here additional requirements to be installed at execution time
+# additional requirements to be installed at execution time
+audiocraft~=0.0.1
