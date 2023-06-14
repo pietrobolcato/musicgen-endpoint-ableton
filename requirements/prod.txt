@@ -4,3 +4,321 @@
 #
 #    pip-compile --resolver=backtracking /workspaces/musicgen-endpoint-ableton/scripts/../requirements/prod.in
 #
+antlr4-python3-runtime==4.9.3
+    # via
+    #   hydra-core
+    #   omegaconf
+appdirs==1.4.4
+    # via pooch
+audiocraft==0.0.1
+    # via -r /workspaces/musicgen-endpoint-ableton/scripts/../requirements/prod.in
+audioread==3.0.0
+    # via librosa
+av==10.0.0
+    # via audiocraft
+blis==0.7.9
+    # via thinc
+catalogue==2.0.8
+    # via
+    #   spacy
+    #   srsly
+    #   thinc
+certifi==2023.5.7
+    # via requests
+cffi==1.15.1
+    # via soundfile
+charset-normalizer==3.1.0
+    # via requests
+click==8.1.3
+    # via typer
+cloudpickle==2.2.1
+    # via submitit
+cmake==3.26.4
+    # via triton
+colorlog==6.7.0
+    # via
+    #   flashy
+    #   hydra-colorlog
+confection==0.0.4
+    # via thinc
+cymem==2.0.7
+    # via
+    #   preshed
+    #   spacy
+    #   thinc
+cython==0.29.35
+    # via diffq
+decorator==5.1.1
+    # via librosa
+demucs==4.0.0
+    # via audiocraft
+diffq==0.2.4
+    # via demucs
+docopt==0.6.2
+    # via num2words
+dora-search==0.1.12
+    # via
+    #   demucs
+    #   flashy
+einops==0.6.1
+    # via
+    #   audiocraft
+    #   demucs
+filelock==3.12.2
+    # via
+    #   huggingface-hub
+    #   torch
+    #   transformers
+    #   triton
+flashy==0.0.2
+    # via audiocraft
+fsspec==2023.6.0
+    # via huggingface-hub
+huggingface-hub==0.15.1
+    # via transformers
+hydra-colorlog==1.2.0
+    # via audiocraft
+hydra-core==1.3.2
+    # via
+    #   audiocraft
+    #   hydra-colorlog
+idna==3.4
+    # via requests
+jinja2==3.1.2
+    # via
+    #   spacy
+    #   torch
+joblib==1.2.0
+    # via
+    #   librosa
+    #   scikit-learn
+julius==0.2.7
+    # via
+    #   audiocraft
+    #   demucs
+lameenc==1.4.2
+    # via demucs
+langcodes==3.3.0
+    # via spacy
+lazy-loader==0.2
+    # via librosa
+librosa==0.10.0.post2
+    # via audiocraft
+lit==16.0.6
+    # via triton
+llvmlite==0.40.1rc1
+    # via numba
+markupsafe==2.1.3
+    # via jinja2
+mpmath==1.3.0
+    # via sympy
+msgpack==1.0.5
+    # via librosa
+murmurhash==1.0.9
+    # via
+    #   preshed
+    #   spacy
+    #   thinc
+mypy-extensions==1.0.0
+    # via typing-inspect
+networkx==3.1
+    # via torch
+num2words==0.5.12
+    # via audiocraft
+numba==0.57.0
+    # via librosa
+numpy==1.24.3
+    # via
+    #   audiocraft
+    #   blis
+    #   diffq
+    #   flashy
+    #   librosa
+    #   numba
+    #   openunmix
+    #   scikit-learn
+    #   scipy
+    #   soxr
+    #   spacy
+    #   thinc
+    #   transformers
+    #   xformers
+nvidia-cublas-cu11==11.10.3.66
+    # via
+    #   nvidia-cudnn-cu11
+    #   nvidia-cusolver-cu11
+    #   torch
+nvidia-cuda-cupti-cu11==11.7.101
+    # via torch
+nvidia-cuda-nvrtc-cu11==11.7.99
+    # via torch
+nvidia-cuda-runtime-cu11==11.7.99
+    # via torch
+nvidia-cudnn-cu11==8.5.0.96
+    # via torch
+nvidia-cufft-cu11==10.9.0.58
+    # via torch
+nvidia-curand-cu11==10.2.10.91
+    # via torch
+nvidia-cusolver-cu11==11.4.0.1
+    # via torch
+nvidia-cusparse-cu11==11.7.4.91
+    # via torch
+nvidia-nccl-cu11==2.14.3
+    # via torch
+nvidia-nvtx-cu11==11.7.91
+    # via torch
+omegaconf==2.3.0
+    # via
+    #   dora-search
+    #   hydra-core
+openunmix==1.2.1
+    # via demucs
+packaging==23.1
+    # via
+    #   huggingface-hub
+    #   hydra-core
+    #   pooch
+    #   spacy
+    #   thinc
+    #   transformers
+pathy==0.10.1
+    # via spacy
+pooch==1.6.0
+    # via librosa
+preshed==3.0.8
+    # via
+    #   spacy
+    #   thinc
+pycparser==2.21
+    # via cffi
+pydantic==1.10.9
+    # via
+    #   -r /workspaces/musicgen-endpoint-ableton/scripts/../requirements/prod.in
+    #   confection
+    #   spacy
+    #   thinc
+pyre-extensions==0.0.29
+    # via xformers
+pyyaml==6.0
+    # via
+    #   demucs
+    #   huggingface-hub
+    #   omegaconf
+    #   transformers
+regex==2023.6.3
+    # via transformers
+requests==2.31.0
+    # via
+    #   huggingface-hub
+    #   pooch
+    #   spacy
+    #   transformers
+retrying==1.3.4
+    # via dora-search
+safetensors==0.3.1
+    # via transformers
+scikit-learn==1.2.2
+    # via librosa
+scipy==1.10.1
+    # via
+    #   librosa
+    #   scikit-learn
+sentencepiece==0.1.99
+    # via audiocraft
+six==1.16.0
+    # via retrying
+smart-open==6.3.0
+    # via
+    #   pathy
+    #   spacy
+soundfile==0.12.1
+    # via librosa
+soxr==0.3.5
+    # via librosa
+spacy==3.5.2
+    # via audiocraft
+spacy-legacy==3.0.12
+    # via spacy
+spacy-loggers==1.0.4
+    # via spacy
+srsly==2.4.6
+    # via
+    #   confection
+    #   spacy
+    #   thinc
+submitit==1.4.5
+    # via dora-search
+sympy==1.12
+    # via torch
+thinc==8.1.10
+    # via spacy
+threadpoolctl==3.1.0
+    # via scikit-learn
+tokenizers==0.13.3
+    # via transformers
+torch==2.0.1
+    # via
+    #   audiocraft
+    #   demucs
+    #   diffq
+    #   dora-search
+    #   flashy
+    #   julius
+    #   openunmix
+    #   torchaudio
+    #   triton
+    #   xformers
+torchaudio==2.0.2
+    # via
+    #   audiocraft
+    #   demucs
+    #   openunmix
+tqdm==4.65.0
+    # via
+    #   audiocraft
+    #   demucs
+    #   huggingface-hub
+    #   openunmix
+    #   spacy
+    #   transformers
+transformers==4.30.2
+    # via audiocraft
+treetable==0.2.5
+    # via dora-search
+triton==2.0.0
+    # via torch
+typer==0.7.0
+    # via
+    #   pathy
+    #   spacy
+typing-extensions==4.6.3
+    # via
+    #   huggingface-hub
+    #   librosa
+    #   pydantic
+    #   pyre-extensions
+    #   submitit
+    #   torch
+    #   typing-inspect
+typing-inspect==0.9.0
+    # via pyre-extensions
+urllib3==2.0.3
+    # via requests
+wasabi==1.1.2
+    # via
+    #   spacy
+    #   thinc
+wheel==0.40.0
+    # via
+    #   nvidia-cublas-cu11
+    #   nvidia-cuda-cupti-cu11
+    #   nvidia-cuda-runtime-cu11
+    #   nvidia-curand-cu11
+    #   nvidia-cusparse-cu11
+    #   nvidia-nvtx-cu11
+xformers==0.0.20
+    # via audiocraft
+
+# The following packages are considered to be unsafe in a requirements file:
+# setuptools

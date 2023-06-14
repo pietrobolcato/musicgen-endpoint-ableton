@@ -5,4 +5,3 @@
 pre-commit
 pip-tools
 pytest
-sagemaker[local]
