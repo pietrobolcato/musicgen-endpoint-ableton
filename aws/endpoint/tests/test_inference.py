@@ -26,9 +26,11 @@ request_body = json.dumps(
 )
 
 model = inference.model_fn(model_dir=ENDPOINT_SRC_ROOT_DIR)
-input_data = inference.input_fn(
+validated_model = inference.input_fn(
     request_body=request_body,
     content_type="application/json",
 )
-prediction = inference.predict_fn(input_data=input_data, model=model)
+prediction = inference.predict_fn(validated_model=validated_model, model=model)
 output = inference.output_fn(prediction=prediction, content_type="application/json")
+
+print(output)

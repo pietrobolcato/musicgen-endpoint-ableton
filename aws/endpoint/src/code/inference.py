@@ -7,8 +7,8 @@ import time
 
 import torch
 from audiocraft.models import musicgen
-
-from aws.endpoint.src.helpers import utils
+from helpers import utils
+from helpers.schema.request import RequestModel
 
 # define logging settings
 logging.basicConfig(
@@ -46,7 +46,7 @@ def model_fn(model_dir: str) -> musicgen.MusicGen:
     return model
 
 
-def input_fn(request_body: str, content_type: str) -> dict:
+def input_fn(request_body: str, content_type: str) -> RequestModel:
     """
     Preprocess the input data. Checks that its in json format, and returns a python
     dictionary
@@ -60,27 +60,27 @@ def input_fn(request_body: str, content_type: str) -> dict:
 
     Returns
     -------
-    dict
-        The json string parsed to python dictionary
+    RequestModel
+        The validated request model
     """
     assert content_type == "application/json", "Only `application/json` is supported"
+    assert isinstance(request_body, str), "Expected `request_body` to be string"
 
-    # TODO: add schema validation
+    # validate request schema
+    request_body = json.loads(request_body)
+    validated_model = RequestModel(**request_body)
 
-    if isinstance(request_body, str):
-        request_body = json.loads(request_body)
-
-    return request_body
+    return validated_model
 
 
-def predict_fn(input_data: dict, model: musicgen.MusicGen) -> tuple:
+def predict_fn(validated_model: RequestModel, model: musicgen.MusicGen) -> tuple:
     """
     Perform inference based on the request
 
     Parameters
     ----------
-    input_data : dict
-        The request input data, returned by the `input_fn` function
+    validated_model : RequestModel
+        The validated request input data, returned by the `input_fn` function
     model : musicgen.MusicGen
         The musicgen loaded model
 
@@ -91,11 +91,21 @@ def predict_fn(input_data: dict, model: musicgen.MusicGen) -> tuple:
         time
     """
     start_time = time.time()
+    logging.info(f"Received request with data: {validated_model}")
 
-    logging.info(f"Received request with data: {input_data}")
+    # set generation parameters
+    model.set_generation_params(
+        duration=validated_model.duration,
+        temperature=validated_model.temperature,
+        top_p=validated_model.top_p,
+        top_k=validated_model.top_k,
+        cfg_coef=validated_model.cfg_coefficient,
+    )
 
-    utils.set_generation_parameters(input_data, model)
-    prediction = model.generate([input_data.get("prompt")], progress=False)
+    # run prediction
+    prediction = model.generate([validated_model.prompt], progress=False)
+
+    # convert prediction to base64
     prediction_base64 = utils.audio_to_base64(
         audio=prediction[0],
         sample_rate=model.sample_rate,
