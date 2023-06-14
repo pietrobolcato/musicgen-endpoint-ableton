@@ -8,7 +8,7 @@ terraform {
 
   backend "s3" {
     bucket         = "pbolcato-tf-state-dev"
-    key            = "<NAMESPACE>/sagemaker/terraform.tfstate"
+    key            = "musicgen-project/sagemaker/terraform.tfstate"
     region         = "us-east-1"
     dynamodb_table = "terraform-lock-dev"
   }

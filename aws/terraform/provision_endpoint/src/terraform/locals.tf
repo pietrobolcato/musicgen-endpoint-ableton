@@ -1,9 +1,8 @@
 locals {
   tags = {
     owner       = "pietrobolcato@gmail.com"
-    project     = "ex02"
+    project     = "musicgen-project"
     environment = "${var.environment}"
     toolkit     = "terraform"
-    name        = "${var.namespace}-${var.postfix}-${var.environment}"
   }
 }
