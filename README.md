@@ -101,7 +101,7 @@ a pull request with new features! This is how the patch is currently implemented
 
     The API endpoint equally returns `application/json`, in the format:
 
-    ```python
+    ```json
     {
       "result": {
           "prediction": "<PREDICTION-IN-BASE64>",
