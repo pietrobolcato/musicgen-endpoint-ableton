@@ -1,4 +1,4 @@
-name: lambda-provision
+name: lambda-destroy
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  lambda-provision:
+  lambda-destroy:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -36,4 +36,4 @@ jobs:
       - name: chalice deploy
         run: |
           cd aws/endpoint/lambda/public_endpoint/
-          chalice destroy
+          chalice delete
