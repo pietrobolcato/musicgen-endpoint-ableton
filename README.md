@@ -85,8 +85,8 @@ a pull request with new features! This is how the patch is currently implemented
 
 1. Request schema
 
-    The API endpoint accepts `application/json`. The schema for the request is as 
-    following:
+    The API endpoint accepts requests with content type `application/json`. The schema 
+    for them is as following:
 
     ```python
     prompt: str
@@ -124,7 +124,7 @@ a pull request with new features! This is how the patch is currently implemented
     }
     ```
 
-    Which would return:
+    And the response would look like:
 
     ```json
     {
