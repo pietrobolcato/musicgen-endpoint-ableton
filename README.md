@@ -13,14 +13,42 @@ https://github.com/pietrobolcato/musicgen-endpoint-ableton/assets/3061306/4640ae
 
 ## Get started
 
-1.  Login to AWS: `aws sso login`
+1. Login to AWS: `aws sso login`
 
-2.  Change the configuration in `aws/terraform/provision_ec2/src/config-dev.yaml` and
-    `aws/terraform/provision_ec2/src/config-prod.yaml`. Also update the `main.tf`
-    backend as needed, especially in the terraform state `key`. Finally, change
-    `locals.tf` as needed.
+2. Create the `dev` environment and activate it:
 
-3.  Use github actions defined in `.github/workflows/` to execute the CD pipeline and
-    provision / destroy the endpoint.
+  ```bash
+  conda env create -n dev -f envs/dev.yaml
+  conda activate dev
+  ```
 
-4. Sta
+3. Download the model artifacts: 
+  
+  ```bash
+  cd aws/endpoint/src/artifacts/
+  python download_artifacts.py
+  ```
+
+4. Create the model tar gz: 
+  ```
+  cd aws/endpoint/model/
+  bash create_tar.sh
+  ```
+
+5. Build and publish the custom docker image for the endpoint:
+
+  ```
+  cd aws/endpoint/container/
+  bash build_and_publish.sh
+  ```
+
+6. Update the deployment notebook `aws/endpoint/notebooks/deployment.ipynb`, to reflect
+the url of the image published in `step 5`, and use it to register the model.
+
+7. Change the configuration in `aws/terraform/provision_ec2/src/config-dev.yaml` and
+`aws/terraform/provision_ec2/src/config-prod.yaml`. Also update the `main.tf`
+backend as needed, especially in the terraform state `key`. Finally, change
+`locals.tf` as needed.
+
+8. Use github actions defined in `.github/workflows/` to execute the CD pipeline and
+provision / destroy the endpoint.
