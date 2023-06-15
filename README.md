@@ -11,40 +11,40 @@ Check out the demo below! Audio on! 🔊🔽
 
 https://github.com/pietrobolcato/musicgen-endpoint-ableton/assets/3061306/4640ae7c-a8a0-4875-beb5-8f9479ab4e26
 
-## Get started
+## 🚀 Get started
 
 1. Login to AWS: 
 
-  ```
-  aws sso login
-  ```
+    ```
+    aws sso login
+    ```
 
 2. Create the `dev` environment and activate it:
 
-  ```bash
-  conda env create -n dev -f envs/dev.yaml
-  conda activate dev
-  ```
+    ```bash
+    conda env create -n dev -f envs/dev.yaml
+    conda activate dev
+    ```
 
 3. Download the model artifacts: 
   
-  ```bash
-  cd aws/endpoint/src/artifacts/
-  python download_artifacts.py
-  ```
+    ```bash
+    cd aws/endpoint/src/artifacts/
+    python download_artifacts.py
+    ```
 
 4. Create the model tar gz: 
-  ```
-  cd aws/endpoint/model/
-  bash create_tar.sh
-  ```
+    ```
+    cd aws/endpoint/model/
+    bash create_tar.sh
+    ```
 
 5. Build and publish the custom docker image for the endpoint:
 
-  ```
-  cd aws/endpoint/container/
-  bash build_and_publish.sh
-  ```
+    ```
+    cd aws/endpoint/container/
+    bash build_and_publish.sh
+    ```
 
 6. Update the deployment notebook `aws/endpoint/notebooks/deployment.ipynb`, to reflect
 the url of the image published in `step 5`, and use it to register the model.
@@ -54,5 +54,36 @@ the url of the image published in `step 5`, and use it to register the model.
 backend as needed, especially in the terraform state `key`. Finally, change
 `locals.tf` as needed.
 
-8. Use github actions defined in `.github/workflows/` to execute the CD pipeline and
-provision / destroy the endpoint.
+8. Change the configuration of the workflow files in `.github/workflows/` as needed
+
+9. Use github actions defined in `.github/workflows/` to execute the CD pipeline and
+provision the endpoint as well as the lambda function, which will return a URL where
+the REST API are exposed
+
+10. Test that all working by sending a GET request to the URL given by the workflow 
+`.github/workflows/lambda-provision.yaml`. You should get a JSON like: 
+
+    ```json
+    {
+      "status": "online"
+    }
+    ```
+
+11. Open Ableton Live, import the Max4Live device located under `m4l/Musicgen.amxd`
+
+12. Set the `API Endpoint URL` parameter to the URL returned in `step 9`. Then, write a
+prompt, and press `Generate`
+
+## 🔧 Max4Live device
+
+In Ableton Live, you can edit the Max For Live device. Feel free to do it, and submit
+a pull request with new features! This is how the patch is currently implemented:
+
+![max4live patch](docs/media/m4l_patch.png)
+
+## 🔥 Contributing and bug reports
+
+For any bugs or problem you might encounter, feel free to open an issue, I would be very 
+happy to help out as much as I can!
+
+For any contribution, feel free to submit a PR. Thank you!
