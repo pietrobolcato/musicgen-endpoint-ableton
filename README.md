@@ -1,15 +1,15 @@
-# Musicgen Endpoint for Ableton 
+# 🎶🌈 MetaAI Musicgen — AWS Endpoint + Ableton integration
 
-This repo implements [Meta's Musicgen](https://github.com/facebookresearch/audiocraft) — 
-a state of the art text to music model — as scalable online endpoint in AWS Sagemaker.
+This repository implements [Musicgen](https://github.com/facebookresearch/audiocraft), 
+a state of the art text-to-music model, as a scalable online endpoint in AWS Sagemaker. 
+It includes a lambda function to enable public access to the endpoint, as well as a 
+[Max4Live](https://www.ableton.com/en/live/max-for-live/) device that allows to 
+perform inference right within Ableton Live, seamlessly integrating the model into 
+any music production workflow. 
 
-It provides:
-- The code to provision the endpoint, as well as a CD pipeline to provision it 
-automatically
-- A lambda function to publicly access the endpoint
-- A [Max4Live](https://www.ableton.com/en/live/max-for-live/) device to perform the 
-inference inside Ableton Live, enabling to use the model as part of a music production
-workflow.
+Check out the demo below! Audio on! 🔊🔽
+
+https://github.com/pietrobolcato/musicgen-endpoint-ableton/assets/3061306/4640ae7c-a8a0-4875-beb5-8f9479ab4e26
 
 ## Get started
 
