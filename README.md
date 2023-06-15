@@ -15,7 +15,7 @@ https://github.com/pietrobolcato/musicgen-endpoint-ableton/assets/3061306/4640ae
 
 1. Login to AWS: 
 
-    ```
+    ```bash
     aws sso login
     ```
 
@@ -34,14 +34,14 @@ https://github.com/pietrobolcato/musicgen-endpoint-ableton/assets/3061306/4640ae
     ```
 
 4. Create the model tar gz: 
-    ```
+    ```bash
     cd aws/endpoint/model/
     bash create_tar.sh
     ```
 
 5. Build and publish the custom docker image for the endpoint:
 
-    ```
+    ```bash
     cd aws/endpoint/container/
     bash build_and_publish.sh
     ```
