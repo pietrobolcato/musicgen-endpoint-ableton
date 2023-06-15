@@ -13,7 +13,11 @@ https://github.com/pietrobolcato/musicgen-endpoint-ableton/assets/3061306/4640ae
 
 ## Get started
 
-1. Login to AWS: `aws sso login`
+1. Login to AWS: 
+
+  ```
+  aws sso login
+  ```
 
 2. Create the `dev` environment and activate it:
 
