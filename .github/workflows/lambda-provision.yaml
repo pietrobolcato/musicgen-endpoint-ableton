@@ -18,8 +18,8 @@ jobs:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: ${{ inputs.aws_role }}
-          aws-region: ${{ inputs.aws_role_region }}
+          role-to-assume: arn:aws:iam::138140302683:role/gha-role-sagemaker
+          aws-region: us-east-1
 
       - name: check identity
         run: |
