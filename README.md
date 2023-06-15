@@ -81,6 +81,60 @@ a pull request with new features! This is how the patch is currently implemented
 
 ![max4live patch](docs/media/m4l_patch.png)
 
+## ✨ API schema
+
+1. Request schema
+
+    The API endpoint accepts `application/json`. The schema for the request is as 
+    following:
+
+    ```python
+    prompt: str
+    duration: Optional[float] = 8.0
+    temperature: Optional[float] = 1.0
+    top_p: Optional[float] = 0.0
+    top_k: Optional[int] = 250
+    cfg_coefficient: Optional[float] = 3.0
+    ```
+
+2. Response schema
+
+    The API endpoint equally returns `application/json`, in the format:
+
+    ```python
+    {
+      "result": {
+          "prediction": "<PREDICTION-IN-BASE64>",
+          "processing_time_ms": "<PROCESSING-TIME-IN-MS>",
+      },
+    }
+    ```
+
+    Where `prediction` is a .mp3 audio file encoded in base64.
+
+3. Example request
+
+    For example, a valid JSON request would be:
+
+    ```json
+    {
+      "prompt": "calm piano music",
+      "duration": 4.0,
+      "temperature": 0.8
+    }
+    ```
+
+    Which would return:
+
+    ```json
+    {
+      "result": {
+        "prediction": "//voxAAAOvInHjW8gAeKw6gjO7AAAM+ze...",
+        "processing_time_ms": 15124
+      }
+    }
+    ```
+
 ## 🔥 Contributing and bug reports
 
 For any bugs or problem you might encounter, feel free to open an issue, I would be very 
