@@ -13,11 +13,8 @@ https://github.com/pietrobolcato/musicgen-endpoint-ableton/assets/3061306/4640ae
 
 ## Get started
 
-1.  Login to AWS:
+1.  Login to AWS: `aws sso login`
 
-    ```
-    aws sso login
-    ```
 2.  Change the configuration in `aws/terraform/provision_ec2/src/config-dev.yaml` and
     `aws/terraform/provision_ec2/src/config-prod.yaml`. Also update the `main.tf`
     backend as needed, especially in the terraform state `key`. Finally, change
@@ -26,4 +23,4 @@ https://github.com/pietrobolcato/musicgen-endpoint-ableton/assets/3061306/4640ae
 3.  Use github actions defined in `.github/workflows/` to execute the CD pipeline and
     provision / destroy the endpoint.
 
-4. TODO
+4. Sta
