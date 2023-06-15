@@ -16,8 +16,12 @@ audioread==3.0.0
     # via librosa
 av==10.0.0
     # via audiocraft
+blessed==1.20.0
+    # via inquirer
 blis==0.7.9
     # via thinc
+botocore==1.29.153
+    # via chalice
 catalogue==2.0.8
     # via
     #   spacy
@@ -27,10 +31,14 @@ certifi==2023.5.7
     # via requests
 cffi==1.15.1
     # via soundfile
+chalice==1.29.0
+    # via -r /workspaces/musicgen-endpoint-ableton/scripts/../requirements/prod.in
 charset-normalizer==3.1.0
     # via requests
 click==8.1.3
-    # via typer
+    # via
+    #   chalice
+    #   typer
 cloudpickle==2.2.1
     # via submitit
 cmake==3.26.4
@@ -84,10 +92,16 @@ hydra-core==1.3.2
     #   hydra-colorlog
 idna==3.4
     # via requests
+inquirer==2.10.1
+    # via chalice
 jinja2==3.1.2
     # via
     #   spacy
     #   torch
+jmespath==1.0.1
+    # via
+    #   botocore
+    #   chalice
 joblib==1.2.0
     # via
     #   librosa
@@ -200,12 +214,19 @@ pydantic==1.10.9
     #   thinc
 pyre-extensions==0.0.29
     # via xformers
+python-dateutil==2.8.2
+    # via botocore
+python-editor==1.0.4
+    # via inquirer
 pyyaml==6.0
     # via
+    #   chalice
     #   demucs
     #   huggingface-hub
     #   omegaconf
     #   transformers
+readchar==4.0.5
+    # via inquirer
 regex==2023.6.3
     # via transformers
 requests==2.31.0
@@ -227,7 +248,11 @@ scipy==1.10.1
 sentencepiece==0.1.99
     # via audiocraft
 six==1.16.0
-    # via retrying
+    # via
+    #   blessed
+    #   chalice
+    #   python-dateutil
+    #   retrying
 smart-open==6.3.0
     # via
     #   pathy
@@ -294,6 +319,7 @@ typer==0.7.0
     #   spacy
 typing-extensions==4.6.3
     # via
+    #   chalice
     #   huggingface-hub
     #   librosa
     #   pydantic
@@ -303,14 +329,19 @@ typing-extensions==4.6.3
     #   typing-inspect
 typing-inspect==0.9.0
     # via pyre-extensions
-urllib3==2.0.3
-    # via requests
+urllib3==1.26.16
+    # via
+    #   botocore
+    #   requests
 wasabi==1.1.2
     # via
     #   spacy
     #   thinc
+wcwidth==0.2.6
+    # via blessed
 wheel==0.40.0
     # via
+    #   chalice
     #   nvidia-cublas-cu11
     #   nvidia-cuda-cupti-cu11
     #   nvidia-cuda-runtime-cu11
@@ -321,4 +352,5 @@ xformers==0.0.20
     # via audiocraft
 
 # The following packages are considered to be unsafe in a requirements file:
+# pip
 # setuptools
