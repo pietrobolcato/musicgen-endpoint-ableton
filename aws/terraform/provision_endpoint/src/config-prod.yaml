@@ -2,7 +2,7 @@
 
 # general settings
 namespace: musicgen-project
-postfix: '0001'
+postfix: "0001"
 environment: prod
 
 # model settings
@@ -11,7 +11,7 @@ environment: prod
 # to run successfully
 model_group_name: musicgen-model
 model_arn: <get_from_script>
-execution_role_arn: arn:aws:iam::138140302683:role/service-role/AmazonSageMaker-ExecutionRole-20230522T162566
+execution_role_arn: arn:aws:iam::<YOUR-ROLE-HERE>
 
 # endpoint configuration settings
 instance_type: ml.g4dn.xlarge

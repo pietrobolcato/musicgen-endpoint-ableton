@@ -18,7 +18,7 @@ jobs:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::138140302683:role/gha-role-sagemaker
+          role-to-assume: <YOUR-ROLE-HERE>
           aws-region: us-east-1
 
       - name: check identity
@@ -29,10 +29,10 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
-        
+
       - name: install requirements
         run: pip install -r requirements/chalice.txt
-      
+
       - name: chalice deploy
         run: |
           cd aws/endpoint/lambda/public_endpoint/

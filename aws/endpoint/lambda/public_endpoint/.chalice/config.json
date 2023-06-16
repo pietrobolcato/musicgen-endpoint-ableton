@@ -8,7 +8,7 @@
     "dev": {
       "api_gateway_stage": "api",
       "manage_iam_role": false,
-      "iam_role_arn": "arn:aws:iam::138140302683:role/service-role/AmazonSageMaker-ExecutionRole-20230522T162566"
+      "iam_role_arn": "<YOUR-ROLE-HERE>"
     }
   }
 }
