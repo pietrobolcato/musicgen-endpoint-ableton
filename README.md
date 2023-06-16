@@ -9,7 +9,7 @@ any music production workflow.
 
 Check out the demo below! Audio on! 🔊🔽
 
-https://github.com/pietrobolcato/musicgen-endpoint-ableton/assets/3061306/4640ae7c-a8a0-4875-beb5-8f9479ab4e26
+https://github.com/pietrobolcato/musicgen-endpoint-ableton/assets/3061306/37e9f4c0-8982-4f0b-ba74-20b8b97cbc49
 
 ## 🚀 Get started
 
