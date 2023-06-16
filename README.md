@@ -67,15 +67,15 @@ https://github.com/pietrobolcato/musicgen-endpoint-ableton/assets/3061306/4640ae
 11. Test that all working by sending a GET request to the URL given by the workflow
     `.github/workflows/lambda-provision.yaml`. You should get a JSON like:
 
-        ```json
-        {
-          "status": "online"
-        }
-        ```
+    ```json
+    {
+      "status": "online"
+    }
+    ```
 
 12. Open Ableton Live, import the Max4Live device located under `m4l/Musicgen.amxd`
 
-13. Set the `API Endpoint URL` parameter to the URL returned in `step 9`. Then, write a
+13. Set the `API Endpoint URL` parameter to the URL returned in `step 10`. Then, write a
     prompt, and press `Generate`
 
 ## 🔧 Max4Live device
