@@ -1,0 +1,39 @@
+name: lambda-provision
+
+on:
+  workflow_dispatch:
+  # push:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  lambda-provision:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: <YOUR-ROLE-HERE>
+          aws-region: us-east-1
+
+      - name: check identity
+        run: |
+          aws sts get-caller-identity
+
+      - name: install python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: install requirements
+        run: pip install -r requirements/chalice.txt
+
+      - name: chalice deploy
+        run: |
+          cd aws/endpoint/lambda/public_endpoint/
+          chalice --debug deploy

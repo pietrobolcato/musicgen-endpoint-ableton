@@ -1,7 +1,7 @@
 locals {
   tags = {
     owner       = "pietrobolcato@gmail.com"
-    project     = "ai-module-template"
+    project     = "musicgen-project"
     environment = "${var.environment}"
     toolkit     = "terraform"
   }

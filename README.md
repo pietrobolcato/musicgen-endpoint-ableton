@@ -1,99 +1,147 @@
-# Image generation endpoint
+# 🎶🌈 MetaAI Musicgen — AWS Endpoint + Ableton integration
 
-This repo is a general template to develop AI module and provision them as Sagemaker
-endpoint. The folder `aws` is defined as follows:
+This repository implements [Musicgen](https://github.com/facebookresearch/audiocraft),
+a state of the art text-to-music model, as a scalable online endpoint in AWS Sagemaker.
+It includes a lambda function to enable public access to the endpoint, as well as a
+[Max4Live](https://www.ableton.com/en/live/max-for-live/) device that allows to
+perform inference right within Ableton Live, seamlessly integrating the model into
+any music production workflow.
 
-```
-aws
-├── endpoint
-│   ├── model
-│   ├── notebooks
-│   ├── src
-│   │   ├── code
-│   │   └── helpers
-│   └── tests
-│       └── support
-│           ├── expected_output
-│           ├── input
-│           └── predicted_output
-└── terraform
-    ├── provision_ec2
-    │   └── src
-    └── provision_endpoint
-        └── src
-            ├── scripts
-            └── terraform
-```
+Check out the demo below! Audio on! 🔊🔽
 
-Where:
+https://github.com/pietrobolcato/musicgen-endpoint-ableton/assets/3061306/4640ae7c-a8a0-4875-beb5-8f9479ab4e26
 
-- `endpoint` contains all the endpoint-related code. This include:
-
-  - `model`: this folder includes the `model.tar.gz` file, and the bash script to
-    create it
-  - `notebooks`: this folder includes the notebooks used to test the model locally, to
-    register the model in the model registry, and test the deployment online.
-  - `src`: this folder includes the inference code, as well scoring-specific helper
-    libraries and functions.
-  - `tests`: this folder includes the tests for the functions defined in
-    the `inference.py` code. These tests are fundamental in the development workflow.
-    For more information, check the [Development workflow](#development-workflow)
-    section below.
-
-- `terraform`: contains the terraform code to provision the ec2 instance as well as the
-  endpoint during CD. Check the readme of the invidual folders for more information.
-
-## Development workflow
-
-The development workflow is as following:
-
-- All the development happens inside the dev container
-- Only when there is the need to run the notebook, this is run from another vscode
-  window connected with ssh only
-- The `inference.py` script should be tested with their invidual functions, eg: as shown
-  in the `aws/endpoint/src/tests/` folder. Once these work as expected, only then the you
-  should execute the local deploymnt notebook. This is a huge time-saver, because the
-  notebook can be very slow to run.
-
-## Get started
+## 🚀 Get started
 
 1.  Login to AWS:
 
-    ```
+    ```bash
     aws sso login
     ```
 
-2.  Change the configuration in `aws/terraform/provision_ec2/src/config.tfvars`, and
-    update the `main.tf` backend as needed, especially in the terraform state `key`.
-    Also, change `locals.tf`. Then create the ec2 dev instance:
+2.  Create the `dev` environment and activate it:
 
     ```bash
-    cd aws/terraform/provision_ec2/
-    terraform init
-    terraform plan -out=out.tfplan
-    terraform apply out.tfplan
-    ```
-
-3.  Connect to the ec2 dev instance using vscode remote ssh server
-
-4.  Create and activate dev env
-
-    ```
-    conda env create -f envs/dev.yaml -n dev
+    conda env create -n dev -f envs/dev.yaml
     conda activate dev
     ```
 
-5.  Develop the `inference.py` code, using `aws/endpoint/src/tests/` to ensure that
-    all the methods work as expected.
+3.  Download the model artifacts:
 
-6.  Test the endpoint using the `deployment.ipynb` notebook.
+    ```bash
+    cd aws/endpoint/src/artifacts/
+    python download_artifacts.py
+    ```
 
-7.  Repeat step 5 and 6 until ready.
+4.  Create the model tar gz:
 
-8.  Change the configuration in `aws/terraform/provision_ec2/src/config-dev.yaml` and
+    ```bash
+    cd aws/endpoint/model/
+    bash create_tar.sh
+    ```
+
+5.  Build and publish the custom docker image for the endpoint:
+
+    ```bash
+    cd aws/endpoint/container/
+    bash build_and_publish.sh
+    ```
+
+6.  Update the deployment notebook `aws/endpoint/notebooks/deployment.ipynb`, to reflect
+    the url of the image published in `step 5`, and use it to register the model.
+
+7.  Change the configuration in `aws/terraform/provision_ec2/src/config-dev.yaml` and
     `aws/terraform/provision_ec2/src/config-prod.yaml`. Also update the `main.tf`
     backend as needed, especially in the terraform state `key`. Finally, change
     `locals.tf` as needed.
 
-9.  Use github actions defined in `.github/workflows/` to execute the CD pipeline and
-    provision / destroy the endpoint.
+8.  Change the configuration of the workflow files in `.github/workflows/` as needed
+
+9.  Change the configuration of the chalice application, located in
+    `aws/endpoint/lambda/public_endpoint/.chalice/config.json`
+
+10. Use github actions defined in `.github/workflows/` to execute the CD pipeline and
+    provision the endpoint as well as the lambda function, which will return a URL where
+    the REST API are exposed
+
+11. Test that all working by sending a GET request to the URL given by the workflow
+    `.github/workflows/lambda-provision.yaml`. You should get a JSON like:
+
+    ```json
+    {
+      "status": "online"
+    }
+    ```
+
+12. Open Ableton Live, import the Max4Live device located under `m4l/Musicgen.amxd`
+
+13. Set the `API Endpoint URL` parameter to the URL returned in `step 10`. Then, write a
+    prompt, and press `Generate`
+
+## 🔧 Max4Live device
+
+In Ableton Live, you can edit the Max For Live device. Feel free to do it, and submit
+a pull request with new features! This is how the patch is currently implemented:
+
+![max4live patch](docs/media/m4l_patch.png)
+
+## ✨ API schema
+
+1. Request schema
+
+   The API endpoint accepts requests with content type `application/json`. The schema
+   for them is as following:
+
+   ```python
+   prompt: str
+   duration: Optional[float] = 8.0
+   temperature: Optional[float] = 1.0
+   top_p: Optional[float] = 0.0
+   top_k: Optional[int] = 250
+   cfg_coefficient: Optional[float] = 3.0
+   ```
+
+2. Response schema
+
+   The API endpoint equally returns `application/json`, in the format:
+
+   ```json
+   {
+     "result": {
+       "prediction": "<PREDICTION-IN-BASE64>",
+       "processing_time_ms": "<PROCESSING-TIME-IN-MS>"
+     }
+   }
+   ```
+
+   Where `prediction` is a .mp3 audio file encoded in base64.
+
+3. Example request
+
+   For example, a valid JSON request would be:
+
+   ```json
+   {
+     "prompt": "calm piano music",
+     "duration": 4.0,
+     "temperature": 0.8
+   }
+   ```
+
+   And the response would look like:
+
+   ```json
+   {
+     "result": {
+       "prediction": "//voxAAAOvInHjW8gAeKw6gjO7AAAM+ze...",
+       "processing_time_ms": 15124
+     }
+   }
+   ```
+
+## 🔥 Contributing and bug reports
+
+For any bugs or problem you might encounter, feel free to open an issue, I would be very
+happy to help out as much as I can!
+
+For any contribution, feel free to submit a PR. Thank you!
